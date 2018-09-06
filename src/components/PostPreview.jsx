@@ -29,7 +29,7 @@ const PostPreview = (props) => {
     });
   }
 
-  return (<Post post={previewPost} />);
+  return (<Post post={previewPost} isPreview />);
 };
 
 PostPreview.propTypes = {

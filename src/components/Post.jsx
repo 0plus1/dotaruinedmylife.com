@@ -37,10 +37,14 @@ class Post extends Component {
     const {
       post,
       isStory,
+      isPreview,
       authUserId,
       deletePostHandler,
     } = this.props;
     const permalink = `/story/${post.slug}`;
+    if (isPreview === true) {
+      return <CardFooter />;
+    }
     return (
       <CardFooter>
         {(isStory === false) ? (
@@ -68,7 +72,7 @@ class Post extends Component {
   }
 
   render() {
-    const { post } = this.props;
+    const { post, isStory } = this.props;
 
     return (
       <Card>
@@ -117,6 +121,7 @@ Post.propTypes = {
   // eslint-disable-next-line react/no-typos
   post: postShape.isRequired,
   isStory: PropTypes.bool,
+  isPreview: PropTypes.bool,
   authUserId: PropTypes.string,
   deletePostHandler: PropTypes.func.isRequired,
 };
@@ -124,6 +129,7 @@ Post.propTypes = {
 Post.defaultProps = {
   authUserId: null,
   isStory: false,
+  isPreview: false,
 };
 
 export default Post;
