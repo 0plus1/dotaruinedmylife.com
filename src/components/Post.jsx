@@ -102,7 +102,7 @@ class Post extends Component {
             </Title>
           </Content>
           <Content>
-            <Truncate>
+            <Truncate forceOpen={isStory}>
               <RendersMarkdown markdown={post.markdown} />
             </Truncate>
             <br />
