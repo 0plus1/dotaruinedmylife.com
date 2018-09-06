@@ -1,0 +1,10 @@
+.navbar-top {
+    padding: 0 20px;
+}
+.navbar-top span.icon img{
+    height: 40px;
+}
+button.steam-logo {
+    background-color: transparent;
+    border: none;
+}
