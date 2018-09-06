@@ -21,7 +21,7 @@ const SiteFooter = () => (
               Made with
               {' '}
               <span role="img" aria-label="Heart">
-                ♥
+                ♥y
               </span>
               {' '}
               -
@@ -32,7 +32,7 @@ const SiteFooter = () => (
         </Columns>
         <Content isSize="small">
           <p>
-            By visiting this website you accept our
+            By interacting with this website you accept our
             {' '}
             <a href="/#/terms-of-service">Terms of Service</a>
             {' '}

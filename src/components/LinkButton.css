@@ -1,0 +1,13 @@
+button.linkButton,
+button.linkButton:hover,
+button.linkButton:active,
+button.linkButton:focus,
+button.linkButton.is-focused:not(:active),
+button.linkButton:focus:not(:active)
+{
+    background-color: transparent;
+    border-color: transparent;
+    color: transparent;
+    border: 0;
+    box-shadow: none;
+}
