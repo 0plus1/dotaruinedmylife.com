@@ -1,0 +1,17 @@
+{
+  "development": {
+    "api" : {
+      "baseUri": "https://api.dotaruinedmylife.dev/"
+    }
+  },
+  "production": {
+    "api" : {
+      "baseUri": "https://api.dotaruinedmylife.com/"
+    }
+  },
+  "test": {
+    "api" : {
+      "baseUri": ""
+    }
+  }
+}
