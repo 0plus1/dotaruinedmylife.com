@@ -5,6 +5,7 @@ import {
   API_CREATE_ONE_POST,
   API_DELETE_ONE_POST,
   API_READ_AUTH_USER,
+  USER_LOGOUT,
   ERROR_API_GENERIC,
 } from '../actions';
 
@@ -37,6 +38,8 @@ const AuthUserReducer = (state = null, action) => {
   switch (action.type) {
     case API_READ_AUTH_USER:
       return action.payload.data;
+    case USER_LOGOUT:
+      return null;
     default:
       return state;
   }
