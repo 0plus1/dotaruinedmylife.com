@@ -4,9 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // Libraries
 import { Container, Columns } from 'bloomer';
-// Global css for this layout
-// TODO refactor with JSS
-import 'bulma/css/bulma.css';
 
 import { getAccessToken, isLoggedIn } from '../../modules/AuthService';
 import { apiReadAuthUser } from '../../actions';
@@ -17,8 +14,6 @@ import NavbarTop from '../../containers/NavbarTop';
 import ApiError from '../../components/ApiError';
 import SiteFooter from '../../components/SiteFooter';
 
-// Style
-import '../../vendor/bulmaswatch.css';
 import './AppLayout.css';
 
 export default function AppLayout(WrappedComponent) {

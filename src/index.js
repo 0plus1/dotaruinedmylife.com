@@ -4,10 +4,17 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import ReduxPromise from 'redux-promise';
 
+// Global css for this layout
+// TODO refactor with JSS
+import 'bulma/css/bulma.css';
+// Import styles order: https://github.com/facebook/create-react-app/issues/3621
+import './vendor/bulmaswatch.css';
+
 import Routes from './routes';
 import reducers from './reducers';
 
 import registerServiceWorker from './registerServiceWorker';
+
 
 const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore);
 
