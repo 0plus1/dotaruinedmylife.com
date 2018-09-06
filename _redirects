@@ -1,0 +1,6 @@
+# Redirect default Netlify subdomain to primary domain
+http://hardcore-nobel-b6ad46.netlify.com/* https://www.dotaruinedmylife.com/:splat 301!
+https://hardcore-nobel-b6ad46.netlify.com/* https://www.dotaruinedmylife.com/:splat 301!
+http://www.dotaruinedmylife.com/* https://www.dotaruinedmylife.com/:splat 301!
+http://dotaruinedmylife.com/* https://www.dotaruinedmylife.com/:splat 301!
+https://dotaruinedmylife.com/* https://www.dotaruinedmylife.com/:splat 301!
