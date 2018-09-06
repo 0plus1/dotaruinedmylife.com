@@ -21,7 +21,7 @@ const SiteFooter = () => (
               Made with
               {' '}
               <span role="img" aria-label="Heart">
-                ♥y
+                ♥
               </span>
               {' '}
               -
