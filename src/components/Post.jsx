@@ -49,11 +49,9 @@ class Post extends Component {
       <CardFooter>
         {(isStory === false) ? (
           <CardFooterItem>
-            <Button>
-              <Link href={permalink} to={permalink}>
-                Permalink
-              </Link>
-            </Button>
+            <Link href={permalink} to={permalink}>
+              Permalink
+            </Link>
           </CardFooterItem>
         ) : (
           <ShareButtons markdown={post.markdown} />
