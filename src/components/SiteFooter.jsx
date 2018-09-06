@@ -18,16 +18,11 @@ const SiteFooter = () => (
         <Columns>
           <Column>
             <p>
-              Made
-              {' '}
-              with
+              Made with
               {' '}
               <span role="img" aria-label="Heart">
                 ♥
               </span>
-              in
-              {' '}
-              Melbourne
               {' '}
               -
               {' '}
@@ -36,6 +31,15 @@ const SiteFooter = () => (
           </Column>
         </Columns>
         <Content isSize="small">
+          <p>
+            By visiting this website you accept our
+            {' '}
+            <a href="/#/terms-of-service">Terms of Service</a>
+            {' '}
+            and
+            {' '}
+            <a href="/#/privacy-policy">Privacy Policy</a>
+          </p>
           <p>
             {copyrightNotice}
           </p>
