@@ -10,6 +10,7 @@ import {
   NavbarMenu,
   NavbarLink,
   NavbarDropdown,
+  NavbarBurger,
   NavbarEnd,
 } from 'bloomer';
 
@@ -27,6 +28,7 @@ import steamLogin from '../images/steam-login.png';
 class NavbarTop extends Component {
   state = {
     isRedirectingToSteam: false,
+    isActive: false,
   };
 
   /**
@@ -48,9 +50,32 @@ class NavbarTop extends Component {
       });
   }
 
+  toggleNav() {
+    const { isActive } = this.state;
+    this.setState({ isActive: !isActive });
+  }
+
   render() {
     const { authUser } = this.props;
-    const { isRedirectingToSteam } = this.state;
+    const { isRedirectingToSteam, isActive } = this.state;
+    const steamLoginButton = (
+      <LinkButton
+        isLoading={isRedirectingToSteam}
+        isActive={isRedirectingToSteam}
+        onClick={() => { this.redirectToSteam(); }}
+      >
+        <img src={steamLogin} alt="Login using steam" />
+      </LinkButton>
+    );
+    const loggedInMenu = (
+      <React.Fragment>
+        <NavbarLink>{ (authUser) ? authUser.name : '...' }</NavbarLink>
+        <NavbarDropdown>
+          <NavbarItem href="/#/logout">Logout</NavbarItem>
+        </NavbarDropdown>
+      </React.Fragment>
+    );
+
     return (
       <Navbar className="navbar-top" style={{ borderRadius: 0 }}>
         <NavbarBrand>
@@ -59,25 +84,21 @@ class NavbarTop extends Component {
               <img src={dotaLogo} alt="DOTA ruined my life" />
             </span>
           </NavbarItem>
+            <NavbarItem isHidden="desktop">
+              { steamLoginButton }
+            </NavbarItem>
+          <NavbarBurger isActive={isActive} onClick={() => this.toggleNav()} />
         </NavbarBrand>
 
-        <NavbarMenu isActive>
+        <NavbarMenu isActive={isActive}>
           <NavbarEnd>
             { isLoggedIn() ? (
               <NavbarItem hasDropdown isHoverable>
-                <NavbarLink>{ (authUser) ? authUser.name : '...' }</NavbarLink>
-                <NavbarDropdown>
-                  <NavbarItem href="/#/logout">Logout</NavbarItem>
-                </NavbarDropdown>
+                { loggedInMenu }
               </NavbarItem>
             ) : (
-              <NavbarItem onClick={() => { this.redirectToSteam(); }}>
-                <LinkButton
-                  isLoading={isRedirectingToSteam}
-                  isActive={isRedirectingToSteam}
-                >
-                  <img src={steamLogin} alt="Login using steam" />
-                </LinkButton>
+              <NavbarItem isHidden="touch">
+                { steamLoginButton }
               </NavbarItem>
             )}
           </NavbarEnd>
