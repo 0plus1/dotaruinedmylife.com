@@ -9,7 +9,19 @@ import {
   ERROR_API_GENERIC,
 } from '../actions';
 
+
 const PostsReducer = (state = [], action) => {
+  // This is very hacky
+  // TODO use normalizr
+  const mergeWithoutDuplicates = (firstMergable, secondMergable) => {
+    const mergedState = [...firstMergable, ...secondMergable];
+    // Create an array of all slugs in the position they appear, duplicate ones will appear last
+    const uniqueIdentifiersPositions = mergedState.map(el => el.slug);
+    // Is the current item position the same of the uniqueItendifiersPositions
+    // If it's in the wrong position it means it's duplicated
+    return mergedState.filter((item, pos) => uniqueIdentifiersPositions.indexOf(item.slug) === pos);
+  };
+
   switch (action.type) {
     case API_READ_PAGINATED_POSTS: {
       const posts = action.payload.data.data;
@@ -19,7 +31,7 @@ const PostsReducer = (state = [], action) => {
       if (!state.length) {
         return posts;
       }
-      return [...state, ...posts];
+      return mergeWithoutDuplicates(state, posts);
     }
     case API_CREATE_ONE_POST: {
       return [action.payload.data, ...state];
