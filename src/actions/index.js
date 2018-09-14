@@ -3,9 +3,11 @@ import Api from '../modules/Api';
 export const API_READ_PAGINATED_POSTS = 'API_READ_PAGINATED_POSTS';
 export const API_CREATE_ONE_POST = 'API_CREATE_ONE_POST';
 export const API_DELETE_ONE_POST = 'API_DELETE_ONE_POST';
-export const API_READ_AUTH_USER = 'API_READ_AUTH_USER';
 
-export const USER_LOGOUT = 'USER_LOGOUT';
+export const AUTH_USER_LOGGING_IN = 'AUTH_USER_LOGGING_IN';
+export const AUTH_USER_LOGIN = 'AUTH_USER_LOGIN';
+export const AUTH_USER_READ = 'API_READ_AUTH_USER';
+export const AUTH_USER_LOGOUT = 'USER_LOGOUT';
 
 export const ERROR_API_GENERIC = 'ERROR_API_GENERIC';
 
@@ -36,18 +38,33 @@ export function apiDeletePost(postSlug, token) {
   };
 }
 
-export function apiReadAuthUser(token) {
-  const request = Api.readUserFromToken(token);
+export function authUserLoggingIn() {
+  return {
+    type: AUTH_USER_LOGGING_IN,
+  };
+}
+
+export function authUserLogin(search) {
+  const request = Api.readTokenFromOauthParams(search);
 
   return {
-    type: API_READ_AUTH_USER,
+    type: AUTH_USER_LOGIN,
     payload: request,
   };
 }
 
-export function userLogout() {
+export function authUserRead(token) {
+  const request = Api.readUserFromToken(token);
+
   return {
-    type: USER_LOGOUT,
+    type: AUTH_USER_READ,
+    payload: request,
+  };
+}
+
+export function authUserLogout() {
+  return {
+    type: AUTH_USER_LOGOUT,
   };
 }
 

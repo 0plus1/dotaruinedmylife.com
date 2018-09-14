@@ -4,11 +4,12 @@ import {
   API_READ_PAGINATED_POSTS,
   API_CREATE_ONE_POST,
   API_DELETE_ONE_POST,
-  API_READ_AUTH_USER,
-  USER_LOGOUT,
+  AUTH_USER_LOGGING_IN,
+  AUTH_USER_LOGIN,
+  AUTH_USER_READ,
+  AUTH_USER_LOGOUT,
   ERROR_API_GENERIC,
 } from '../actions';
-
 
 const PostsReducer = (state = [], action) => {
   // This is very hacky
@@ -46,12 +47,35 @@ const PostsReducer = (state = [], action) => {
   }
 };
 
-const AuthUserReducer = (state = null, action) => {
+const AuthReducerInitialState = {
+  token: '',
+  loggingIn: false,
+  loggedIn: false,
+  user: null,
+};
+const AuthReducer = (state = AuthReducerInitialState, action) => {
+  const addToState = (currentState, toUpdate) => {
+    return { ...currentState, ...toUpdate };
+  };
+
   switch (action.type) {
-    case API_READ_AUTH_USER:
-      return action.payload.data;
-    case USER_LOGOUT:
-      return null;
+    case AUTH_USER_LOGGING_IN:
+      return addToState(state, { loggingIn: true });
+    case AUTH_USER_LOGIN: {
+      const payloadAccessToken = action.payload.data.access_token;
+      return addToState(state, {
+        token: payloadAccessToken,
+        loggingIn: false,
+        loggedIn: true,
+      });
+    }
+    case AUTH_USER_READ: {
+      const user = action.payload.data;
+      return addToState(state, { user });
+    }
+    case AUTH_USER_LOGOUT: {
+      return AuthReducerInitialState;
+    }
     default:
       return state;
   }
@@ -68,7 +92,7 @@ const apiGenericErrorStringReducer = (state = null, action) => {
 
 const rootReducer = combineReducers({
   posts: PostsReducer,
-  authUser: AuthUserReducer,
+  auth: AuthReducer,
   apiGenericErrorString: apiGenericErrorStringReducer,
 });
 
