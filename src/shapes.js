@@ -1,10 +1,22 @@
-import { shape, string, number } from 'prop-types';
+import {
+  shape,
+  string,
+  number,
+  bool,
+} from 'prop-types';
 
 export const authUserShape = shape({
   id: string.isRequired,
   avatar: string.isRequired,
   name: string.isRequired,
   profile_url: string.isRequired,
+});
+
+export const authShape = shape({
+  token: string.isRequired,
+  loggingIn: bool.isRequired,
+  loggedIn: bool.isRequired,
+  user: authUserShape,
 });
 
 export const postShape = shape({
