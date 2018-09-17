@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Button } from 'bloomer';
 
 import AppLayout from './layouts/AppLayout';
 import RendersPosts from '../containers/RendersPosts';
 import CreatesPost from '../containers/CreatesPost';
-import { authShape, postShape } from '../shapes';
+import { authShape } from '../shapes';
 
 class HomeView extends Component {
   state = {

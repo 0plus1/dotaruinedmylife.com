@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { Container, Columns } from 'bloomer';
 
 import { authUserRead } from '../../actions';
-import { authShape, postShape } from '../../shapes';
+import { authShape } from '../../shapes';
 
 // Custom components
 import NavbarTop from '../../containers/NavbarTop';
@@ -61,7 +61,7 @@ export default function AppLayout(WrappedComponent) {
     apiGenericErrorString: null,
   };
 
-  function mapStateToProps({ posts, auth, apiGenericErrorString }) {
+  function mapStateToProps({ auth, apiGenericErrorString }) {
     return { auth, apiGenericErrorString };
   }
 
