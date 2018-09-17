@@ -5,13 +5,14 @@ import { bindActionCreators } from 'redux';
 // Libraries
 import { Container, Columns } from 'bloomer';
 
-import { authUserRead } from '../../actions';
-import { authShape } from '../../shapes';
-
 // Custom components
 import NavbarTop from '../../containers/NavbarTop';
 import ApiError from '../../components/ApiError';
 import SiteFooter from '../../components/SiteFooter';
+import { storeLog, LOG_LEVEL_ERROR } from '../../modules/Logger';
+
+import { authUserRead, authUserLogout, raiseApiGenericError } from '../../actions';
+import { authShape } from '../../shapes';
 
 import './AppLayout.css';
 
@@ -24,9 +25,18 @@ export default function AppLayout(WrappedComponent) {
     };
 
     componentDidMount() {
-      const { auth, actionAuthUserRead } = this.props;
+      const {
+        auth,
+        actionAuthUserRead,
+        actionRaiseApiGenericError,
+        actionAuthUserLogout,
+      } = this.props;
       if (auth.loggedIn) {
-        actionAuthUserRead(auth.token);
+        actionAuthUserRead(auth.token).catch((error) => {
+          actionAuthUserLogout();
+          actionRaiseApiGenericError('Cannot retrieve user, session expired! Please login again');
+          storeLog(error, LOG_LEVEL_ERROR);
+        });
       }
     }
 
@@ -55,6 +65,8 @@ export default function AppLayout(WrappedComponent) {
     auth: authShape.isRequired,
     apiGenericErrorString: PropTypes.string,
     actionAuthUserRead: PropTypes.func.isRequired,
+    actionAuthUserLogout: PropTypes.func.isRequired,
+    actionRaiseApiGenericError: PropTypes.func.isRequired,
   };
 
   AppLayoutComponent.defaultProps = {
@@ -66,7 +78,11 @@ export default function AppLayout(WrappedComponent) {
   }
 
   function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ actionAuthUserRead: authUserRead }, dispatch);
+    return bindActionCreators({
+      actionAuthUserRead: authUserRead,
+      actionAuthUserLogout: authUserLogout,
+      actionRaiseApiGenericError: raiseApiGenericError,
+    }, dispatch);
   }
 
   return connect(mapStateToProps, mapDispatchToProps)(AppLayoutComponent);
