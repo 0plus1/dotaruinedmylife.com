@@ -54,9 +54,7 @@ const AuthReducerInitialState = {
   user: null,
 };
 const AuthReducer = (state = AuthReducerInitialState, action) => {
-  const addToState = (currentState, toUpdate) => {
-    return { ...currentState, ...toUpdate };
-  };
+  const addToState = (currentState, toUpdate) => ({ ...currentState, ...toUpdate });
 
   switch (action.type) {
     case AUTH_USER_LOGGING_IN:
