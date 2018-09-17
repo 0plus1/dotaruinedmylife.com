@@ -3,7 +3,7 @@ import { Button } from 'bloomer';
 
 import AppLayout from './layouts/AppLayout';
 import RendersPosts from '../containers/RendersPosts';
-import CreatesPost from '../containers/CreatesPost';
+import CreatesOrUpdatesPost from '../containers/CreatesOrUpdatesPost';
 import { authShape } from '../shapes';
 
 class HomeView extends Component {
@@ -21,7 +21,7 @@ class HomeView extends Component {
         && (
           <div>
             <Button isColor="info" onClick={() => this.setState({ createPostModalOpen: true })}>Create Post</Button>
-            <CreatesPost
+            <CreatesOrUpdatesPost
               authUser={authUser}
               openModal={createPostModalOpen}
               clickCloseModalHandler={() => this.setState({ createPostModalOpen: false })}

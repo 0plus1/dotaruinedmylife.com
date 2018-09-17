@@ -1,16 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Post from './Post';
-import { authUserShape } from '../shapes';
+import { authUserShape, postFormShape } from '../shapes';
 
 const PostPreview = (props) => {
   const {
     authUser,
+    formData,
+  } = props;
+  const {
     anonymous,
     playtime,
     markdown,
-  } = props;
+  } = formData;
+
   let previewPost = {
     user_id: authUser.id,
     user_avatar: authUser.avatar,
@@ -19,7 +22,7 @@ const PostPreview = (props) => {
     playtime,
     markdown,
     slug: '',
-    timeago: new Date().getTime(),
+    timeago: new Date().toISOString(),
   };
   if (anonymous === true) {
     previewPost = Object.assign({}, previewPost, {
@@ -29,7 +32,7 @@ const PostPreview = (props) => {
     });
   }
 
-  return (<Post post={previewPost} isPreview />);
+  return (<Post post={previewPost} isPreview deletePostHandler={() => null} />);
 };
 
 PostPreview.propTypes = {
@@ -37,9 +40,7 @@ PostPreview.propTypes = {
   // TODO follow up
   // eslint-disable-next-line react/no-typos
   authUser: authUserShape.isRequired,
-  anonymous: PropTypes.bool.isRequired,
-  playtime: PropTypes.number.isRequired,
-  markdown: PropTypes.string.isRequired,
+  formData: postFormShape.isRequired,
 };
 
 export default PostPreview;

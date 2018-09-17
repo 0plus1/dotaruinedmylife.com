@@ -19,6 +19,12 @@ export const authShape = shape({
   user: authUserShape,
 });
 
+export const postFormShape = shape({
+  markdown: string.isRequired,
+  playtime: number.isRequired,
+  anonymous: bool.isRequired,
+});
+
 export const postShape = shape({
   markdown: string.isRequired,
   playtime: number.isRequired,
