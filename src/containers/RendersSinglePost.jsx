@@ -6,11 +6,10 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
-import { getAccessToken } from '../modules/AuthService';
 import Post from '../components/Post';
 import Loading from '../components/Loading';
 import { apiDeletePost, raiseApiGenericError } from '../actions';
-import { postShape, authUserShape } from '../shapes';
+import { authShape, postShape } from '../shapes';
 
 /**
  * This is just a redux container that wraps the post component
@@ -22,7 +21,7 @@ class RendersSinglePost extends Component {
   };
 
   async deleteSelf(postSlug) {
-    const { actionApiDeletePost, actionRaiseApiGenericError } = this.props;
+    const { auth, actionApiDeletePost, actionRaiseApiGenericError } = this.props;
     confirmAlert({
       title: 'Are you sure you want to delete your post?',
       message: 'This action cannot be undone.',
@@ -31,7 +30,7 @@ class RendersSinglePost extends Component {
           label: 'Yes, delete',
           onClick: () => {
             this.setState({ loading: true });
-            actionApiDeletePost(postSlug, getAccessToken())
+            actionApiDeletePost(postSlug, auth.token)
               .catch((error) => {
                 this.setState({ loading: false });
                 actionRaiseApiGenericError('Cannot reach API');
@@ -48,7 +47,8 @@ class RendersSinglePost extends Component {
   }
 
   render() {
-    const { post, authUser, isStory } = this.props;
+    const { post, auth, isStory } = this.props;
+    const { user: authUser } = auth;
     const { loading } = this.state;
     let authUserId = null;
     if (authUser) {
@@ -73,20 +73,20 @@ class RendersSinglePost extends Component {
 }
 
 RendersSinglePost.propTypes = {
-  // https://github.com/yannickcr/eslint-plugin-react/issues/1389
-  // TODO follow up
-  // eslint-disable-next-line react/no-typos
   post: postShape.isRequired,
-  authUser: authUserShape,
+  auth: authShape.isRequired,
   isStory: PropTypes.bool,
   actionApiDeletePost: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
 };
 
 RendersSinglePost.defaultProps = {
-  authUser: null,
   isStory: false,
 };
+
+function mapStateToProps({ auth }) {
+  return { auth };
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
@@ -95,4 +95,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(RendersSinglePost);
+export default connect(mapStateToProps, mapDispatchToProps)(RendersSinglePost);

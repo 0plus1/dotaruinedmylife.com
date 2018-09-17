@@ -21,12 +21,11 @@ import {
   TabLink,
 } from 'bloomer';
 
-import { getAccessToken } from '../modules/AuthService';
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
 import FormValidator from '../modules/FormValidator';
 import PostPreview from '../components/PostPreview';
 import { apiCreatePost, raiseApiGenericError } from '../actions';
-import { authUserShape } from '../shapes';
+import { authShape } from '../shapes';
 
 import './CreatesPost.css';
 
@@ -84,11 +83,12 @@ class CreatesPost extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    const { auth } = this.props;
     const validation = this.validator.validate(this.state);
     const { clickCloseModalHandler, actionApiCreatePost, actionRaiseApiGenericError } = this.props;
     if (validation.isValid) {
       this.setState({ submitting: true });
-      actionApiCreatePost(this.state, getAccessToken()).then(() => {
+      actionApiCreatePost(this.state, auth.token).then(() => {
         this.resetState();
         clickCloseModalHandler();
       }).catch((error) => {
@@ -115,7 +115,8 @@ class CreatesPost extends Component {
       anonymous,
       submitting,
     } = this.state;
-    const { openModal, clickCloseModalHandler, authUser } = this.props;
+    const { openModal, clickCloseModalHandler, auth } = this.props;
+    const { user: authUser } = auth;
     // if the form has been submitted at least once
     // then check validity every time we render
     // otherwise just use what's in state
@@ -226,12 +227,16 @@ CreatesPost.propTypes = {
   // https://github.com/yannickcr/eslint-plugin-react/issues/1389
   // TODO follow up
   // eslint-disable-next-line react/no-typos
-  authUser: authUserShape.isRequired,
+  auth: authShape.isRequired,
   clickCloseModalHandler: PropTypes.func.isRequired,
   openModal: PropTypes.bool.isRequired,
   actionApiCreatePost: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
 };
+
+function mapStateToProps({ auth }) {
+  return { auth };
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
@@ -240,4 +245,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(CreatesPost);
+export default connect(mapStateToProps, mapDispatchToProps)(CreatesPost);

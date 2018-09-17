@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'bloomer';
 
-import { isLoggedIn } from '../modules/AuthService';
 import AppLayout from './layouts/AppLayout';
 import RendersPosts from '../containers/RendersPosts';
 import CreatesPost from '../containers/CreatesPost';
-import { authUserShape, postShape } from '../shapes';
+import { authShape, postShape } from '../shapes';
 
 class HomeView extends Component {
   state = {
@@ -14,11 +13,12 @@ class HomeView extends Component {
   };
 
   render() {
-    const { authUser, posts } = this.props;
+    const { auth } = this.props;
+    const { user: authUser } = auth;
     const { createPostModalOpen } = this.state;
     return (
       <div>
-        {(isLoggedIn() && authUser !== null)
+        {(auth.loggedIn && authUser !== null)
         && (
           <div>
             <Button isColor="info" onClick={() => this.setState({ createPostModalOpen: true })}>Create Post</Button>
@@ -29,20 +29,14 @@ class HomeView extends Component {
             />
           </div>
         )}
-        <RendersPosts posts={posts} authUser={authUser} />
+        <RendersPosts authUser={authUser} />
       </div>
     );
   }
 }
 
 HomeView.propTypes = {
-  authUser: authUserShape,
-  posts: PropTypes.arrayOf(postShape),
-};
-
-HomeView.defaultProps = {
-  authUser: null,
-  posts: {},
+  auth: authShape.isRequired,
 };
 
 const Home = AppLayout(HomeView);

@@ -15,11 +15,10 @@ import {
 } from 'bloomer';
 
 import LinkButton from '../components/LinkButton';
-import { isLoggedIn } from '../modules/AuthService';
 import Api from '../modules/Api';
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
-import { raiseApiGenericError } from '../actions';
-import { authUserShape } from '../shapes';
+import { authUserLoggingIn, authUserLogout, raiseApiGenericError } from '../actions';
+import { authShape } from '../shapes';
 
 import './NavbarTop.css';
 import dotaLogo from '../icons/dota-2.svg';
@@ -27,7 +26,6 @@ import steamLogin from '../images/steam-login.png';
 
 class NavbarTop extends Component {
   state = {
-    isRedirectingToSteam: false,
     isActive: false,
   };
 
@@ -38,8 +36,9 @@ class NavbarTop extends Component {
    * TODO pre-cache the loginUrl?
    */
   redirectToSteam() {
-    const { actionRaiseApiGenericError } = this.props;
-    this.setState({ isRedirectingToSteam: true });
+    const { actionAuthUserLoggingIn, actionRaiseApiGenericError } = this.props;
+    console.log(actionAuthUserLoggingIn);
+    actionAuthUserLoggingIn();
     Api.readLoginUrl()
       .then((response) => {
         window.location.href = response.data;
@@ -50,30 +49,34 @@ class NavbarTop extends Component {
       });
   }
 
+  logoutUser() {
+    const { actionAuthUserLogout } = this.props;
+    actionAuthUserLogout();
+  }
+
   toggleNav() {
     const { isActive } = this.state;
     this.setState({ isActive: !isActive });
   }
 
   render() {
-    const { authUser } = this.props;
-    const { isRedirectingToSteam, isActive } = this.state;
-    const steamLoginButton = (
+    const { auth } = this.props;
+    const { user: authUser } = auth;
+    const { isActive } = this.state;
+
+    const steamLoginButton = (auth.loggingIn ? (
       <LinkButton
-        isLoading={isRedirectingToSteam}
-        isActive={isRedirectingToSteam}
+        isLoading
+        isActive={false}
+      >
+        {' '}
+      </LinkButton>
+    ) : (
+      <LinkButton
         onClick={() => { this.redirectToSteam(); }}
       >
         <img src={steamLogin} alt="Login using steam" />
-      </LinkButton>
-    );
-    const loggedInMenu = (
-      <React.Fragment>
-        <NavbarLink>{ (authUser) ? authUser.name : '...' }</NavbarLink>
-        <NavbarDropdown>
-          <NavbarItem href="/#/logout">Logout</NavbarItem>
-        </NavbarDropdown>
-      </React.Fragment>
+      </LinkButton>)
     );
 
     return (
@@ -84,17 +87,20 @@ class NavbarTop extends Component {
               <img src={dotaLogo} alt="DOTA ruined my life" />
             </span>
           </NavbarItem>
-            <NavbarItem isHidden="desktop">
-              { steamLoginButton }
-            </NavbarItem>
+          <NavbarItem isHidden="desktop">
+            { steamLoginButton }
+          </NavbarItem>
           <NavbarBurger isActive={isActive} onClick={() => this.toggleNav()} />
         </NavbarBrand>
 
         <NavbarMenu isActive={isActive}>
           <NavbarEnd>
-            { isLoggedIn() ? (
+            { auth.loggedIn ? (
               <NavbarItem hasDropdown isHoverable>
-                { loggedInMenu }
+                <NavbarLink>{ (authUser) ? authUser.name : '...' }</NavbarLink>
+                <NavbarDropdown>
+                  <NavbarItem style={{ cursor: 'pointer' }} onClick={() => this.logoutUser()}>Logout</NavbarItem>
+                </NavbarDropdown>
               </NavbarItem>
             ) : (
               <NavbarItem isHidden="touch">
@@ -109,16 +115,22 @@ class NavbarTop extends Component {
 }
 
 NavbarTop.propTypes = {
-  authUser: authUserShape,
+  auth: authShape.isRequired,
+  actionAuthUserLoggingIn: PropTypes.func.isRequired,
+  actionAuthUserLogout: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
 };
 
-NavbarTop.defaultProps = {
-  authUser: null,
-};
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ actionRaiseApiGenericError: raiseApiGenericError }, dispatch);
+function mapStateToProps({ auth }) {
+  return { auth };
 }
 
-export default connect(null, mapDispatchToProps)(NavbarTop);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    actionAuthUserLoggingIn: authUserLoggingIn,
+    actionAuthUserLogout: authUserLogout,
+    actionRaiseApiGenericError: raiseApiGenericError,
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavbarTop);

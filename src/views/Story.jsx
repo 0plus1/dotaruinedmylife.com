@@ -12,7 +12,7 @@ import Api from '../modules/Api';
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
 
 import { raiseApiGenericError } from '../actions';
-import { authUserShape } from '../shapes';
+import { authShape } from '../shapes';
 
 class StoryView extends Component {
   state = {
@@ -34,8 +34,10 @@ class StoryView extends Component {
   }
 
   render() {
-    const { authUser } = this.props;
+    const { auth } = this.props;
+    const { user: authUser } = auth;
     const { loading, post } = this.state;
+
     if (loading === true) {
       return <Loading />;
     }
@@ -52,17 +54,13 @@ class StoryView extends Component {
 }
 
 StoryView.propTypes = {
-  authUser: authUserShape,
+  auth: authShape.isRequired,
   match: PropTypes.shape({
     params: PropTypes.shape({
       slug: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
-};
-
-StoryView.defaultProps = {
-  authUser: null,
 };
 
 const Story = AppLayout(StoryView);

@@ -5,9 +5,8 @@ import { bindActionCreators } from 'redux';
 // Libraries
 import { Container, Columns } from 'bloomer';
 
-import { getAccessToken, isLoggedIn } from '../../modules/AuthService';
-import { apiReadAuthUser } from '../../actions';
-import { postShape, authUserShape } from '../../shapes';
+import { authUserRead } from '../../actions';
+import { authShape, postShape } from '../../shapes';
 
 // Custom components
 import NavbarTop from '../../containers/NavbarTop';
@@ -25,19 +24,18 @@ export default function AppLayout(WrappedComponent) {
     };
 
     componentDidMount() {
-      const { actionApiReadAuthUser } = this.props;
-      if (isLoggedIn()) {
-        actionApiReadAuthUser(getAccessToken());
+      const { auth, actionAuthUserRead } = this.props;
+      if (auth.loggedIn) {
+        actionAuthUserRead(auth.token);
       }
     }
 
     render() {
-      const { authUser, apiGenericErrorString } = this.props;
+      const { apiGenericErrorString } = this.props;
       return (
         <div>
           <NavbarTop
             isPrimary
-            authUser={authUser}
           />
           <Container>
             { apiGenericErrorString
@@ -54,24 +52,21 @@ export default function AppLayout(WrappedComponent) {
   }
 
   AppLayoutComponent.propTypes = {
-    posts: PropTypes.arrayOf(postShape),
-    authUser: authUserShape,
+    auth: authShape.isRequired,
     apiGenericErrorString: PropTypes.string,
-    actionApiReadAuthUser: PropTypes.func.isRequired,
+    actionAuthUserRead: PropTypes.func.isRequired,
   };
 
   AppLayoutComponent.defaultProps = {
-    posts: null,
-    authUser: null,
     apiGenericErrorString: null,
   };
 
-  function mapStateToProps({ posts, authUser, apiGenericErrorString }) {
-    return { posts, authUser, apiGenericErrorString };
+  function mapStateToProps({ posts, auth, apiGenericErrorString }) {
+    return { auth, apiGenericErrorString };
   }
 
   function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ actionApiReadAuthUser: apiReadAuthUser }, dispatch);
+    return bindActionCreators({ actionAuthUserRead: authUserRead }, dispatch);
   }
 
   return connect(mapStateToProps, mapDispatchToProps)(AppLayoutComponent);

@@ -10,7 +10,7 @@ import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
 import RendersSinglePost from './RendersSinglePost';
 import Loading from '../components/Loading';
 import { apiReadPaginatedPosts, raiseApiGenericError } from '../actions';
-import { postShape, authUserShape } from '../shapes';
+import { postShape } from '../shapes';
 
 
 class RendersPosts extends Component {
@@ -52,10 +52,10 @@ class RendersPosts extends Component {
   }
 
   renderPosts() {
-    const { posts, authUser } = this.props;
+    const { posts } = this.props;
     return posts.map(post => (
       <Column isSize={{ desktop: '1/3', tablet: '1/2', mobile: 'full' }} key={post.slug}>
-        <RendersSinglePost post={post} authUser={authUser} />
+        <RendersSinglePost post={post} />
       </Column>
     ));
   }
@@ -85,15 +85,17 @@ class RendersPosts extends Component {
 
 RendersPosts.propTypes = {
   posts: PropTypes.arrayOf(postShape),
-  authUser: authUserShape,
   actionApiReadPaginatedPosts: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
 };
 
 RendersPosts.defaultProps = {
   posts: null,
-  authUser: null,
 };
+
+function mapStateToProps({ posts }) {
+  return { posts };
+}
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
@@ -102,4 +104,4 @@ function mapDispatchToProps(dispatch) {
   }, dispatch);
 }
 
-export default connect(null, mapDispatchToProps)(RendersPosts);
+export default connect(mapStateToProps, mapDispatchToProps)(RendersPosts);
