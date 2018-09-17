@@ -1,3 +1,4 @@
+/* global Rollbar */
 export const LOG_LEVEL_ERROR = 'ERROR';
 
 /**
@@ -7,6 +8,7 @@ export const LOG_LEVEL_ERROR = 'ERROR';
  */
 export function storeLog(log, level) {
   const logObject = { log, level };
-  // console.log(log, level);
-  return `[${logObject.level}] ${logObject.log}`;
+  const logString = `[${logObject.level}] ${logObject.log}`;
+  Rollbar.error(logString);
+  return logString;
 }
