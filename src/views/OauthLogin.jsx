@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { authUserLoggingIn, authUserLogin, raiseApiGenericError } from '../actions';
+import { authUserLoggingIn, authUserLogin, authUserLogout, raiseApiGenericError } from '../actions';
 
 import AppLayout from './layouts/AppLayout';
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
@@ -31,6 +31,9 @@ class OauthLoginView extends Component {
     actionAuthUserLogin(location.search).then(() => {
       this.setState({ loading: false });
     }).catch((error) => {
+      // Reset state if a user cannot be validated from oauth
+      const { actionAuthUserLogout } = this.props;
+      actionAuthUserLogout();
       this.setState({ loading: false });
       actionRaiseApiGenericError('Error validating credentials');
       storeLog(error, LOG_LEVEL_ERROR);
@@ -53,6 +56,7 @@ OauthLoginView.propTypes = {
   }).isRequired,
   actionAuthUserLoggingIn: PropTypes.func.isRequired,
   actionAuthUserLogin: PropTypes.func.isRequired,
+  actionAuthUserLogout: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
 };
 
@@ -62,6 +66,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     actionAuthUserLoggingIn: authUserLoggingIn,
     actionAuthUserLogin: authUserLogin,
+    actionAuthUserLogout: authUserLogout,
     actionRaiseApiGenericError: raiseApiGenericError,
   }, dispatch);
 }
