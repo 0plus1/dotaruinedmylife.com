@@ -19,14 +19,14 @@ class HomeView extends Component {
       <div>
         {(auth.loggedIn && authUser !== null)
         && (
-          <div>
+          <React.Fragment>
             <Button isColor="info" onClick={() => this.setState({ createPostModalOpen: true })}>Create Post</Button>
             <CreatesOrUpdatesPost
               authUser={authUser}
               openModal={createPostModalOpen}
               clickCloseModalHandler={() => this.setState({ createPostModalOpen: false })}
             />
-          </div>
+          </React.Fragment>
         )}
         <RendersPosts authUser={authUser} />
       </div>
