@@ -7,13 +7,20 @@
 ![GG](https://img.shields.io/badge/gg-get%20good-red.svg)
 
 ### Install
-This web app uses the excellent [create-react-app](https://github.com/facebook/create-react-app) if you are not familiar with it I suggest having a read through their docs.
+This web app uses [create-react-app](https://github.com/facebook/create-react-app).
 
 ```bash
 yarn install
-bash start.bash # This automatically sets up https
-# or yarn start
+yarn start
 ```
+
+quickly run eslint with:
+```bash
+bash run-linter.bash # Uses locally installed copy of eslint
+```
+
+### Why
+dotaruinedmylife.com has been my playground to test new technologies for years, I have now decided to settle on a react+redux frontend and open it to the community to hopefullyiscover better practices trough community contributions.
 
 ### Credits
 * Dota icon made by [Freepik](http://www.freepik.com) from [Flaticon](https://www.flaticon.com/) (License: [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/))
