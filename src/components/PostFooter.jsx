@@ -16,6 +16,7 @@ const PostFooter = ({
   isStory,
   isPreview,
   authUserId,
+  triggerPostUpdateHandler,
   deletePostHandler,
 }) => {
   const permalink = `/story/${post.slug}`;
@@ -23,37 +24,42 @@ const PostFooter = ({
     return <CardFooter />;
   }
   return (
-      <CardFooter>
-        {(isStory === false) ? (
-            <CardFooterItem>
-              <Link href={permalink} to={permalink}>
-                Permalink
-              </Link>
-            </CardFooterItem>
-        ) : (
-            <ShareButtons markdown={post.markdown} />
-        )
-        }
-        {(post.user_id === authUserId)
-        && (
-            <CardFooterItem>
-              <Button onClick={() => deletePostHandler(post.slug)}>
-                Delete
-              </Button>
-            </CardFooterItem>
-        )
-        }
-      </CardFooter>);
+    <CardFooter>
+      {(isStory === false) ? (
+        <CardFooterItem>
+          <Link href={permalink} to={permalink}>
+            Permalink
+          </Link>
+        </CardFooterItem>
+      ) : (
+        <CardFooterItem>
+          <ShareButtons markdown={post.markdown} />
+        </CardFooterItem>
+      )}
+      {(post.user_id === authUserId && isStory)
+      && (
+        <React.Fragment>
+          <CardFooterItem>
+            <Button isOutlined isColor="warning" isSize="small" onClick={() => triggerPostUpdateHandler(post)}>
+              Edit
+            </Button>
+          </CardFooterItem>
+          <CardFooterItem>
+            <Button isOutlined isColor="danger" isSize="small" onClick={() => deletePostHandler(post.slug)}>
+              Delete
+            </Button>
+          </CardFooterItem>
+        </React.Fragment>
+      )}
+    </CardFooter>);
 };
 
 PostFooter.propTypes = {
-  // https://github.com/yannickcr/eslint-plugin-react/issues/1389
-  // TODO follow up
-  // eslint-disable-next-line react/no-typos
   post: postShape.isRequired,
   isStory: PropTypes.bool,
   isPreview: PropTypes.bool,
   authUserId: PropTypes.string,
+  triggerPostUpdateHandler: PropTypes.func.isRequired,
   deletePostHandler: PropTypes.func.isRequired,
 };
 

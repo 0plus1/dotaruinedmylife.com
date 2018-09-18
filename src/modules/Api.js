@@ -28,6 +28,10 @@ class Api {
     return this.instance.post('post/create', body, addAuthorizationHeader(token));
   }
 
+  updatePost(postSlug, body, token) {
+    return this.instance.patch(`post/${postSlug}/update`, body, addAuthorizationHeader(token));
+  }
+
   readPost(postSlug) {
     return this.instance.get(`post/${postSlug}/read`);
   }

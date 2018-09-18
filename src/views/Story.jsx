@@ -6,67 +6,105 @@ import { connect } from 'react-redux';
 import { Column, Button } from 'bloomer';
 
 import AppLayout from './layouts/AppLayout';
+import CreatesOrUpdatesPost from '../containers/CreatesOrUpdatesPost';
 import Loading from '../components/Loading';
 import RendersSinglePost from '../containers/RendersSinglePost';
-import Api from '../modules/Api';
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
 
-import { raiseApiGenericError } from '../actions';
-import { authShape } from '../shapes';
+import { apiReadOnePost, raiseApiGenericError } from '../actions';
+import { postShape, authShape } from '../shapes';
 
 class StoryView extends Component {
   state = {
     loading: true,
-    post: null,
+    updatePostModalOpen: false,
   };
 
-  componentWillMount() {
-    const { match, actionRaiseApiGenericError } = this.props;
+  updatePost(postSlug) {
 
-    // TODO should this be an action?
-    Api.readPost(match.params.slug).then((response) => {
-      this.setState({ loading: false, post: response.data });
-    }).catch((error) => {
+  }
+
+  componentWillMount() {
+    const {
+      posts,
+      match,
+      actionApiReadOnePost,
+      actionRaiseApiGenericError,
+    } = this.props;
+    if (posts.length === 0) {
+      actionApiReadOnePost(match.params.slug).then(() => {
+        this.setState({ loading: false });
+      }).catch((error) => {
+        actionRaiseApiGenericError('Unable to reach the API');
+        storeLog(error, LOG_LEVEL_ERROR);
+      });
+    } else {
       this.setState({ loading: false });
-      actionRaiseApiGenericError('Unable to reach the API');
-      storeLog(error, LOG_LEVEL_ERROR);
-    });
+    }
   }
 
   render() {
-    const { auth } = this.props;
+    const { match, posts, auth } = this.props;
     const { user: authUser } = auth;
-    const { loading, post } = this.state;
+    const { loading, updatePostModalOpen } = this.state;
 
     if (loading === true) {
       return <Loading />;
     }
+    const postSlug = match.params.slug;
+    const post = posts.find(iteratedPost => iteratedPost.slug === postSlug);
 
     return (
-      <Column>
-        <Button isColor="info" href="/#/">View all</Button>
-        <Column isSize="full">
-          <RendersSinglePost post={post} authUser={authUser} isStory />
+      <React.Fragment>
+        <CreatesOrUpdatesPost
+          authUser={authUser}
+          openModal={updatePostModalOpen}
+          clickCloseModalHandler={() => this.setState({ updatePostModalOpen: false })}
+          post={post}
+        />
+        <Column>
+          <Button isColor="info" href="/#/">View all</Button>
+          <Column isSize="full">
+            <RendersSinglePost
+              post={post}
+              authUser={authUser}
+              triggerPostUpdateHandler={() => this.setState({ updatePostModalOpen: true })}
+              isStory
+            />
+          </Column>
         </Column>
-      </Column>
+      </React.Fragment>
     );
   }
 }
 
 StoryView.propTypes = {
   auth: authShape.isRequired,
+  posts: PropTypes.arrayOf(postShape),
   match: PropTypes.shape({
     params: PropTypes.shape({
       slug: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
+  actionApiReadOnePost: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
+};
+
+StoryView.defaultProps = {
+  posts: null,
 };
 
 const Story = AppLayout(StoryView);
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ actionRaiseApiGenericError: raiseApiGenericError }, dispatch);
+function mapStateToProps({ posts }) {
+  return { posts };
 }
 
-export default connect(null, mapDispatchToProps)(Story);
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({
+    actionApiReadOnePost: apiReadOnePost,
+    actionRaiseApiGenericError: raiseApiGenericError,
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Story);

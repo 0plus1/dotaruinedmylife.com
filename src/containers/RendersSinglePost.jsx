@@ -47,7 +47,12 @@ class RendersSinglePost extends Component {
   }
 
   render() {
-    const { post, auth, isStory } = this.props;
+    const {
+      post,
+      auth,
+      isStory,
+      triggerPostUpdateHandler,
+    } = this.props;
     const { user: authUser } = auth;
     const { loading } = this.state;
     let authUserId = null;
@@ -67,6 +72,7 @@ class RendersSinglePost extends Component {
         authUserId={authUserId}
         isStory={isStory}
         deletePostHandler={(postSlug) => { this.deleteSelf(postSlug); }}
+        triggerPostUpdateHandler={() => { triggerPostUpdateHandler(); }}
       />
     );
   }
@@ -76,11 +82,13 @@ RendersSinglePost.propTypes = {
   post: postShape.isRequired,
   auth: authShape.isRequired,
   isStory: PropTypes.bool,
+  triggerPostUpdateHandler: PropTypes.func,
   actionApiDeletePost: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
 };
 
 RendersSinglePost.defaultProps = {
+  triggerPostUpdateHandler: () => {},
   isStory: false,
 };
 

@@ -72,17 +72,16 @@ const Post = (props) => {
 };
 
 Post.propTypes = {
-  // https://github.com/yannickcr/eslint-plugin-react/issues/1389
-  // TODO follow up
-  // eslint-disable-next-line react/no-typos
   post: postShape.isRequired,
   isStory: PropTypes.bool,
   isPreview: PropTypes.bool,
   authUserId: PropTypes.string,
+  triggerPostUpdateHandler: PropTypes.func,
   deletePostHandler: PropTypes.func.isRequired,
 };
 
 Post.defaultProps = {
+  triggerPostUpdateHandler: () => {},
   authUserId: null,
   isStory: false,
   isPreview: false,

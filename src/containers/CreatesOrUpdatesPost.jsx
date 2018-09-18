@@ -21,8 +21,8 @@ import {
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
 import PostForm from '../components/PostForm';
 import PostPreview from '../components/PostPreview';
-import { apiCreatePost, raiseApiGenericError } from '../actions';
-import { authShape } from '../shapes';
+import { apiCreatePost, apiUpdatePost, raiseApiGenericError } from '../actions';
+import { postShape, authShape } from '../shapes';
 
 import './CreatesOrUpdatesPost.css';
 
@@ -36,6 +36,23 @@ class CreatesOrUpdatesPost extends Component {
     activeTab: 'create',
     formKey: Math.random(),
   };
+
+  componentWillMount() {
+    const { post } = this.props;
+    if (post !== null) {
+      const {
+        playtime,
+        markdown,
+      } = post;
+      this.setState({
+        formData: {
+          playtime,
+          markdown,
+          anonymous: (post.user_name === ''),
+        },
+      });
+    }
+  }
 
   /**
    * Reset form, forces a re-render of the form component by issuing a new key
@@ -51,38 +68,29 @@ class CreatesOrUpdatesPost extends Component {
     });
   }
 
-  createPost() {
+  createOrUpdatePost() {
     const {
       clickCloseModalHandler,
       auth,
+      post,
       actionApiCreatePost,
+      actionApiUpdatePost,
       actionRaiseApiGenericError,
     } = this.props;
     const { formData } = this.state;
-    actionApiCreatePost(formData, auth.token).then(() => {
-      this.resetForm();
-      clickCloseModalHandler();
-    }).catch((error) => {
-      this.resetForm();
-      clickCloseModalHandler();
-      actionRaiseApiGenericError('Cannot submit data. Please try again!');
-      storeLog(error, LOG_LEVEL_ERROR);
-    });
-  }
 
-  updatePost() {
-    const {
-      clickCloseModalHandler,
-      auth,
-      actionApiCreatePost,
-      actionRaiseApiGenericError,
-    } = this.props;
-    const { formData } = this.state;
-    actionApiCreatePost(formData, auth.token).then(() => {
-      this.resetState();
+    let action = null;
+    if (post === null) {
+      action = actionApiCreatePost(formData, auth.token);
+    } else {
+      action = actionApiUpdatePost(post.slug, formData, auth.token);
+    }
+
+    action.then(() => {
+      this.resetForm();
       clickCloseModalHandler();
     }).catch((error) => {
-      this.resetState();
+      this.resetForm();
       clickCloseModalHandler();
       actionRaiseApiGenericError('Cannot submit data. Please try again!');
       storeLog(error, LOG_LEVEL_ERROR);
@@ -94,10 +102,14 @@ class CreatesOrUpdatesPost extends Component {
   }
 
   renderModalHeader() {
-    const { clickCloseModalHandler } = this.props;
+    const { post, clickCloseModalHandler } = this.props;
     return (
       <ModalCardHeader>
-        <ModalCardTitle>Create new post</ModalCardTitle>
+        { post ? (
+          <ModalCardTitle>Update post</ModalCardTitle>
+        ) : (
+          <ModalCardTitle>Create new post</ModalCardTitle>
+        )}
         <Button isLink onClick={() => { clickCloseModalHandler(); }}>
           Cancel
         </Button>
@@ -146,7 +158,7 @@ class CreatesOrUpdatesPost extends Component {
                 && (
                   <PostForm
                     key={formKey}
-                    createPostHandler={() => this.createPost()}
+                    createPostHandler={() => this.createOrUpdatePost()}
                     formData={formData}
                   />
                 )}
@@ -168,19 +180,26 @@ class CreatesOrUpdatesPost extends Component {
 
 CreatesOrUpdatesPost.propTypes = {
   auth: authShape.isRequired,
+  post: postShape,
   clickCloseModalHandler: PropTypes.func.isRequired,
   openModal: PropTypes.bool.isRequired,
   actionApiCreatePost: PropTypes.func.isRequired,
+  actionApiUpdatePost: PropTypes.func.isRequired,
   actionRaiseApiGenericError: PropTypes.func.isRequired,
 };
 
-function mapStateToProps({ auth }) {
-  return { auth };
+CreatesOrUpdatesPost.defaultProps = {
+  post: null,
+};
+
+function mapStateToProps({ auth, cuPostModal }) {
+  return { auth, cuPostModal };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({
     actionApiCreatePost: apiCreatePost,
+    actionApiUpdatePost: apiUpdatePost,
     actionRaiseApiGenericError: raiseApiGenericError,
   }, dispatch);
 }
