@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -18,10 +19,16 @@ import { authShape, postShape } from '../shapes';
 class RendersSinglePost extends Component {
   state = {
     loading: false,
+    redirectHome: false,
   };
 
   async deleteSelf(postSlug) {
-    const { auth, actionApiDeletePost, actionRaiseApiGenericError } = this.props;
+    const {
+      isStory,
+      auth,
+      actionApiDeletePost,
+      actionRaiseApiGenericError,
+    } = this.props;
     confirmAlert({
       title: 'Are you sure you want to delete your post?',
       message: 'This action cannot be undone.',
@@ -30,12 +37,15 @@ class RendersSinglePost extends Component {
           label: 'Yes, delete',
           onClick: () => {
             this.setState({ loading: true });
-            actionApiDeletePost(postSlug, auth.token)
-              .catch((error) => {
-                this.setState({ loading: false });
-                actionRaiseApiGenericError('Cannot reach API');
-                storeLog(error, LOG_LEVEL_ERROR);
-              });
+            actionApiDeletePost(postSlug, auth.token).then(() => {
+              if (isStory) {
+                this.setState({ redirectHome: true });
+              }
+            }).catch((error) => {
+              this.setState({ loading: false });
+              actionRaiseApiGenericError('Cannot reach API');
+              storeLog(error, LOG_LEVEL_ERROR);
+            });
           },
         },
         {
@@ -54,17 +64,14 @@ class RendersSinglePost extends Component {
       triggerPostUpdateHandler,
     } = this.props;
     const { user: authUser } = auth;
-    const { loading } = this.state;
+    const { redirectHome, loading } = this.state;
     let authUserId = null;
     if (authUser) {
       authUserId = authUser.id;
     }
 
-    if (loading === true) {
-      return (
-        <Loading />
-      );
-    }
+    if (redirectHome === true) { return (<Redirect to="/" />); }
+    if (loading === true) { return (<Loading />); }
 
     return (
       <Post
