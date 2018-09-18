@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  HashRouter as Router,
+  BrowserRouter,
   Route,
   Switch,
 } from 'react-router-dom';
@@ -12,7 +12,7 @@ import PrivacyPolicy from './views/PrivacyPolicy';
 import TermsOfService from './views/TermsOfService';
 
 const Routes = () => (
-  <Router>
+  <BrowserRouter>
     <Switch>
       <Route exact path="/" component={Home} />
       <Route path="/story/:slug" component={Story} />
@@ -21,7 +21,7 @@ const Routes = () => (
       <Route path="/terms-of-service" component={TermsOfService} />
       <Route component={Home} />
     </Switch>
-  </Router>
+  </BrowserRouter>
 );
 
 export default Routes;
