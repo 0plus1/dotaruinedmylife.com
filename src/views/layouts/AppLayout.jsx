@@ -31,7 +31,7 @@ export default function AppLayout(WrappedComponent) {
         actionRaiseApiGenericError,
         actionAuthUserLogout,
       } = this.props;
-      if (auth.loggedIn) {
+      if (auth.loggedIn && !auth.user) {
         actionAuthUserRead(auth.token).catch((error) => {
           actionAuthUserLogout();
           actionRaiseApiGenericError('Cannot retrieve user, session expired! Please login again');
