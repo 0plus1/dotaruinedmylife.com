@@ -34,4 +34,5 @@ export const postShape = shape({
   user_id: string.isRequired,
   user_name: string.isRequired,
   user_profile_url: string.isRequired,
+  edited: bool.isRequired,
 });

@@ -64,6 +64,12 @@ const Post = (props) => {
           </Truncate>
           <br />
           <small><TimeAgo date={post.timeago} /></small>
+          {post.edited && (
+            <React.Fragment>
+              <br />
+              <small>(Edited)</small>
+            </React.Fragment>
+          )}
         </Content>
       </CardContent>
       <PostFooter {...props} />
