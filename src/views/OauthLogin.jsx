@@ -4,7 +4,12 @@ import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { authUserLoggingIn, authUserLogin, authUserLogout, raiseApiGenericError } from '../actions';
+import {
+  authUserLoggingIn,
+  authUserLogin,
+  authUserLogout,
+  raiseApiGenericError
+} from '../actions';
 
 import AppLayout from './layouts/AppLayout';
 import { storeLog, LOG_LEVEL_ERROR } from '../modules/Logger';
@@ -26,7 +31,7 @@ class OauthLoginView extends Component {
       actionAuthUserLogin,
       actionRaiseApiGenericError,
     } = this.props;
-    // Mark user as being logged int
+    // Mark user as being logged in
     actionAuthUserLoggingIn();
     actionAuthUserLogin(location.search).then(() => {
       this.setState({ loading: false });
