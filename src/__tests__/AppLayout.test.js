@@ -10,7 +10,14 @@ const mockStore = configureStore(middlewares);
 
 describe('<AppLayout />', () => {
   describe('renders', () => {
-    const store = mockStore({});
+    const store = mockStore({
+      auth: {
+        token: '',
+        loggingIn: false,
+        loggedIn: false,
+        user: null,
+      },
+    });
     it('without crashing', () => {
       shallow(<AppLayout />);
     });
