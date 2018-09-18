@@ -29,7 +29,7 @@
   "scripts": {
     "start": "HTTPS=true react-scripts start",
     "build": "react-scripts build",
-    "netlify-build": "REACT_APP_ROLLBAR_TOKEN=$rollbarToken yarn start",
+    "netlify-build": "REACT_APP_ROLLBAR_TOKEN=$rollbarToken react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "coverage": "react-scripts test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
