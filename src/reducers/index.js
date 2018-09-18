@@ -2,7 +2,9 @@ import { combineReducers } from 'redux';
 
 import {
   API_READ_PAGINATED_POSTS,
+  API_READ_ONE_POST,
   API_CREATE_ONE_POST,
+  API_UPDATE_ONE_POST,
   API_DELETE_ONE_POST,
   AUTH_USER_LOGGING_IN,
   AUTH_USER_LOGIN,
@@ -34,8 +36,34 @@ const PostsReducer = (state = [], action) => {
       }
       return mergeWithoutDuplicates(state, posts);
     }
+    case API_READ_ONE_POST: {
+      const post = action.payload.data;
+      // This is the first call, page 1
+      // We populate the array directly from the API data
+      // TODO refactor, inelegant
+      if (!state.length) {
+        return [post];
+      }
+      return mergeWithoutDuplicates(state, post);
+    }
     case API_CREATE_ONE_POST: {
       return [action.payload.data, ...state];
+    }
+    case API_UPDATE_ONE_POST: {
+      const post = action.payload.data;
+      // This is the first call, page 1
+      // We populate the array directly from the API data
+      // TODO refactor, inelegant
+      if (!state.length) {
+        return [post];
+      }
+      // This returns a new array instead of mutating the old one
+      return state.map((statePost) => {
+        if (statePost.slug === post.slug) {
+          return post;
+        }
+        return statePost;
+      });
     }
     case API_DELETE_ONE_POST: {
       const deletedPost = action.payload.data;
