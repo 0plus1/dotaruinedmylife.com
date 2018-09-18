@@ -81,15 +81,18 @@ class CreatesOrUpdatesPost extends Component {
 
     let action = null;
     if (post === null) {
-      action = actionApiCreatePost(formData, auth.token);
+      action = actionApiCreatePost(formData, auth.token).then(() => {
+        this.resetForm();
+        clickCloseModalHandler();
+      });
     } else {
-      action = actionApiUpdatePost(post.slug, formData, auth.token);
+      action = actionApiUpdatePost(post.slug, formData, auth.token).then(() => {
+        this.setState({ formKey: Math.random() });
+        clickCloseModalHandler();
+      });
     }
 
-    action.then(() => {
-      this.resetForm();
-      clickCloseModalHandler();
-    }).catch((error) => {
+    action.catch((error) => {
       this.resetForm();
       clickCloseModalHandler();
       actionRaiseApiGenericError('Cannot submit data. Please try again!');
